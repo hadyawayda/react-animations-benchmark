@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Resolve Sans Light";
+  src: url("/fonts/resolve_sans/resolve-light.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Resolve Sans Regular";
+  src: url("/fonts/resolve_sans/resolve-regular.otf") format("opentype");
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --hover-color: #ffffff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Resolve Sans Regular", helvetica, arial, sans-serif;
+}
+
+a:hover {
+  color: var(--hover-color);
+}

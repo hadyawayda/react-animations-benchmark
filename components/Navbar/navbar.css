@@ -1,0 +1,61 @@
+.navbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background: #fff;
+  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.06);
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: linear-gradient(
+    270deg,
+    #ff6ec4,
+    #ffb86c,
+    #50fa7b,
+    #8be9fd,
+    #ff6ec4
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-weave 10s infinite alternate ease-in-out;
+  text-decoration: none;
+  margin-bottom: 15px;
+}
+
+@keyframes gradient-weave {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-link {
+  color: #222;
+  text-decoration: none;
+  font-size: 16px;
+  padding: 6px 32px;
+  border-radius: 25px;
+  transition: all 0.3s ease-in-out;
+  font-weight: 400;
+}
+
+.nav-link:hover {
+  background: #000;
+  color: #fff;
+  font-weight: bold;
+}
