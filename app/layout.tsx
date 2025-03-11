@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
-import "./globals.css";
 import Footer from "@/components/Footer/Footer";
 import Navbar from "@/components/Navbar/Navbar";
+import ReduxProvider from "@/components/ReduxProvider/ReduxProvider";
+import type { Metadata } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "React Animation Libraries Benchmark",
@@ -17,7 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Navbar />
-        {children}
+        <ReduxProvider>{children}</ReduxProvider>
         <Footer />
       </body>
     </html>

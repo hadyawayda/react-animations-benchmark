@@ -36,6 +36,10 @@ body {
   font-family: "Resolve Sans Regular", helvetica, arial, sans-serif;
 }
 
+main {
+  font-family: "Resolve Sans Light", helvetica, arial, sans-serif;
+}
+
 a:hover {
   color: var(--hover-color);
 }
