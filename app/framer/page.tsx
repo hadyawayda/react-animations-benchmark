@@ -77,7 +77,7 @@ export default function FramerSequencePage() {
                 key={i}
                 index={i}
                 transitionTime={transitionTime}
-                animationType={animationType}
+                variantKey={animationType}
                 onFinish={handleFinish}
               />
             );

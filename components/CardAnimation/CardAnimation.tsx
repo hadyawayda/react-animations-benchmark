@@ -1,22 +1,21 @@
 "use client";
 
-import { motion } from "framer-motion";
-import React, { useRef, useEffect } from "react";
-
-type AnimationType = "fade" | "slide" | "scale";
+import React, { useEffect, useRef, useMemo } from "react";
+import { motion, Variants, Target } from "framer-motion";
+import { allVariants } from "@/Constants/FramerAnimationVariants";
 
 interface CardAnimationProps {
   index: number;
-  transitionTime: number; // in ms
+  transitionTime: number; // ms
+  variantKey: string; // e.g. 'fade', 'slideLeft', etc.
   onFinish: (loadTime: number, index: number) => void;
-  animationType: AnimationType;
 }
 
 export default function CardAnimation({
   index,
   transitionTime,
+  variantKey,
   onFinish,
-  animationType,
 }: CardAnimationProps) {
   const startTimeRef = useRef<number | null>(null);
 
@@ -24,39 +23,57 @@ export default function CardAnimation({
     startTimeRef.current = performance.now();
   }, []);
 
-  const variants = {
-    fade: {
-      hidden: { opacity: 0 },
-      visible: {
-        opacity: 1,
-        transition: { duration: transitionTime / 1000, ease: "easeOut" },
-      },
-    },
-    slide: {
-      hidden: { opacity: 0, x: -100 },
-      visible: {
-        opacity: 1,
-        x: 0,
-        transition: { duration: transitionTime / 1000, ease: "easeOut" },
-      },
-    },
-    scale: {
-      hidden: { opacity: 0, scale: 0.5 },
-      visible: {
-        opacity: 1,
-        scale: 1,
-        transition: { duration: transitionTime / 1000, ease: "easeOut" },
-      },
-    },
-  };
+  // Grab the base variant or fallback to 'fade'
+  const baseVariant = allVariants[variantKey] ?? allVariants["fade"];
 
-  const chosenVariant = variants[animationType] ?? variants.fade;
+  /**
+   * Merge dynamic duration into the baseVariant's "visible" and "exit" states,
+   * while preserving the rest of their structure. Then cast to "Variants".
+   */
+  const chosenVariant: Variants = useMemo(() => {
+    // Safe merges for the "visible" state
+    let mergedVisible: Target | undefined = undefined;
+    if (baseVariant.visible) {
+      // Copy the entire visible state
+      mergedVisible = { ...baseVariant.visible };
+
+      // If there's a transition object, override the duration
+      // (Framer allows .transition in a Variant if it's not a function-based variant)
+      if ("transition" in mergedVisible && mergedVisible.transition) {
+        mergedVisible.transition = {
+          ...mergedVisible.transition,
+          duration: transitionTime / 1000,
+        };
+      }
+    }
+
+    // Safe merges for the "exit" state, if it exists
+    let mergedExit: Target | undefined = undefined;
+    if (baseVariant.exit) {
+      mergedExit = { ...baseVariant.exit };
+
+      if ("transition" in mergedExit && mergedExit.transition) {
+        mergedExit.transition = {
+          ...mergedExit.transition,
+          duration: transitionTime / 1000,
+        };
+      }
+    }
+
+    // Return a new object with hidden / visible / exit
+    return {
+      ...baseVariant,
+      visible: mergedVisible,
+      exit: mergedExit,
+    } as Variants;
+  }, [baseVariant, transitionTime]);
 
   return (
     <motion.div
       variants={chosenVariant}
       initial="hidden"
       animate="visible"
+      exit="exit"
       onAnimationComplete={() => {
         const endTime = performance.now();
         const startTime = startTimeRef.current || endTime;

@@ -30,7 +30,7 @@ const TransitionData: React.FC<TransitionDataProps> = ({
   const buttonColor = !isStarted || allDone ? "bg-green-500" : "bg-amber-400";
 
   return (
-    <div className="flex justify-center items-center gap-16 w-full whitespace-nowrap pr-60">
+    <div className="flex justify-center items-center gap-16 w-full whitespace-nowrap">
       <TransitionConfig />
 
       <button

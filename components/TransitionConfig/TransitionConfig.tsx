@@ -1,23 +1,19 @@
 "use client";
-
-import React from "react";
+import { allVariants } from "@/Constants/FramerAnimationVariants";
 import {
   setAnimationCount,
+  setAnimationType,
   setTransitionTime,
-  setSelectedVariantName,
 } from "@/redux/features/transitionSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
-const animationOptions = [
-  { label: "Fade", value: "fade" },
-  { label: "Slide", value: "slide" },
-  { label: "Scale", value: "scale" },
-];
-
 export default function TransitionConfig() {
   const dispatch = useAppDispatch();
-  const { animationCount, transitionTime, selectedVariantName } =
-    useAppSelector((state) => state.transition);
+  const { animationCount, transitionTime, animationType } = useAppSelector(
+    (state) => state.transition
+  );
+
+  const variantKeys = Object.keys(allVariants);
 
   return (
     <div className="flex justify-center items-center">
@@ -49,13 +45,13 @@ export default function TransitionConfig() {
         <label>
           Animation Type:
           <select
-            value={selectedVariantName}
-            onChange={(e) => dispatch(setSelectedVariantName(e.target.value))}
+            value={animationType}
+            onChange={(e) => dispatch(setAnimationType(e.target.value))}
             className="ml-2 border-[1.5px] border-gray-300 rounded-lg px-1"
           >
-            {animationOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+            {variantKeys.map((key) => (
+              <option key={key} value={key}>
+                {key}
               </option>
             ))}
           </select>
