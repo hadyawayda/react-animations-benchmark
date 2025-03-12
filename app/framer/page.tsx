@@ -1,114 +1,89 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CardAnimation from "@/components/CardAnimation/CardAnimation";
 import { useAppSelector } from "@/redux/hooks";
-import TransitionConfig from "@/components/TransitionConfig/TransitionConfig";
+import TransitionData from "@/components/TransitionData/TransitionData";
 
 export default function FramerSequencePage() {
-  // Read from Redux
+  // Redux
   const { animationCount, transitionTime } = useAppSelector(
     (state) => state.transition
   );
 
-  // Current index for the active animation
+  const [lastAnimIndex, setLastAnimIndex] = useState(0);
+  const [lastLoadTime, setLastLoadTime] = useState(0);
+  const [totalTime, setTotalTime] = useState(0);
+  const [finishedCount, setFinishedCount] = useState(0);
+
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Track load times for each animation
-  const [times, setTimes] = useState<(number | null)[]>(
-    Array(animationCount).fill(null)
-  );
+  const [isStarted, setIsStarted] = useState(false);
 
-  // Called when each CardAnimation finishes
+  useEffect(() => {
+    resetAllStates();
+  }, [animationCount]);
+
+  const resetAllStates = () => {
+    setLastAnimIndex(0);
+    setLastLoadTime(0);
+    setTotalTime(0);
+    setFinishedCount(0);
+    setCurrentIndex(0);
+    setIsStarted(false);
+  };
+
   const handleFinish = (rawLoadTime: number, index: number) => {
-    // Optionally subtract the transitionTime from the measured load
-    // e.g. if you want to exclude the overhead from the measured load
     const adjustedLoadTime = rawLoadTime - transitionTime;
     const finalLoadTime = adjustedLoadTime < 0 ? 0 : adjustedLoadTime;
 
-    setTimes((prev) => {
-      const updated = [...prev];
-      updated[index] = finalLoadTime;
-      return updated;
-    });
+    setLastAnimIndex(index + 1);
+    setLastLoadTime(finalLoadTime);
+    setTotalTime((prev) => prev + finalLoadTime);
+    setFinishedCount((prev) => prev + 1);
 
-    // Move on to next animation
     if (index < animationCount - 1) {
       setCurrentIndex(index + 1);
+    } else {
+      setIsStarted(false);
     }
   };
 
-  // Re-compute arrays if the user changes animationCount mid-run
-  // (Or you can handle that differently if you like)
-  React.useEffect(() => {
-    setTimes(Array(animationCount).fill(null));
-    setCurrentIndex(0);
-  }, [animationCount]);
-
-  // Calculate total/average
-  const totalTime = times.reduce((acc, t) => acc + (t ?? 0), 0);
-  const finishedCount = times.filter((t) => t !== null).length;
-  const averageTime = finishedCount > 0 ? totalTime / finishedCount : 0;
-
-  const handleRestart = () => {
-    setTimes(Array(animationCount).fill(null));
-    setCurrentIndex(0);
+  const handleStartOrRestart = () => {
+    if (!isStarted || finishedCount === animationCount) {
+      resetAllStates();
+      setIsStarted(true);
+    } else {
+      resetAllStates();
+    }
   };
 
   return (
     <main style={{ padding: "2rem" }}>
-      <h1>Framer Motion Benchmark</h1>
+      <TransitionData
+        lastAnimIndex={lastAnimIndex}
+        lastLoadTime={lastLoadTime}
+        totalTime={totalTime}
+        finishedCount={finishedCount}
+        animationCount={animationCount}
+        isStarted={isStarted}
+        handleStartOrRestart={handleStartOrRestart}
+      />
 
-      {/* Let the user pick animationCount and transitionTime */}
-      <TransitionConfig />
-
-      {/* Restart Button */}
-      <button
-        onClick={handleRestart}
-        className="px-8 py-3 bg-amber-400 rounded-2xl mb-4 cursor-pointer font-black text-white text-2xl"
-      >
-        Restart Animations
-      </button>
-
-      {/* Show times so far */}
-      <div style={{ marginBottom: "1.5rem" }}>
-        {times.map((time, i) =>
-          time !== null ? (
-            <p key={i}>
-              Animation {i + 1} load time: <strong>{time.toFixed(2)} ms</strong>
-            </p>
-          ) : null
-        )}
-
-        {/* If they're all done, show total & average */}
-        {times.every((t) => t !== null) && (
-          <div>
-            <p>
-              <strong>Total time:</strong> {totalTime.toFixed(2)} ms
-            </p>
-            <p>
-              <strong>Average time per animation:</strong>{" "}
-              {averageTime.toFixed(2)} ms
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Render the 'active' animation */}
-      {Array.from({ length: animationCount }, (_, i) => {
-        if (i === currentIndex) {
-          return (
-            <CardAnimation
-              key={i}
-              index={i}
-              // We'll pass the transitionTime as a prop
-              transitionTime={transitionTime}
-              onFinish={handleFinish}
-            />
-          );
-        }
-        return null;
-      })}
+      {isStarted &&
+        Array.from({ length: animationCount }, (_, i) => {
+          if (i === currentIndex) {
+            return (
+              <CardAnimation
+                key={i}
+                index={i}
+                transitionTime={transitionTime}
+                onFinish={handleFinish}
+              />
+            );
+          }
+          return null;
+        })}
     </main>
   );
 }
