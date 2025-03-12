@@ -1,17 +1,17 @@
+// app/redux/features/transitionSlice.ts
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type AnimationType = "fade" | "slide" | "scale";
-
-interface TransitionState {
+export interface TransitionState {
   animationCount: number;
   transitionTime: number;
-  animationType: AnimationType;
+  selectedVariantName: string; // e.g. 'fade', 'slideLeft', etc.
 }
 
 const initialState: TransitionState = {
   animationCount: 10,
   transitionTime: 300,
-  animationType: "fade",
+  selectedVariantName: "fade",
 };
 
 export const transitionSlice = createSlice({
@@ -24,13 +24,13 @@ export const transitionSlice = createSlice({
     setTransitionTime(state, action: PayloadAction<number>) {
       state.transitionTime = action.payload;
     },
-    setAnimationType(state, action: PayloadAction<AnimationType>) {
-      state.animationType = action.payload;
+    setSelectedVariantName(state, action: PayloadAction<string>) {
+      state.selectedVariantName = action.payload;
     },
   },
 });
 
-export const { setAnimationCount, setTransitionTime, setAnimationType } =
+export const { setAnimationCount, setTransitionTime, setSelectedVariantName } =
   transitionSlice.actions;
 
 export default transitionSlice.reducer;

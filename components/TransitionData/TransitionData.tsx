@@ -35,7 +35,7 @@ const TransitionData: React.FC<TransitionDataProps> = ({
 
       <button
         onClick={handleStartOrRestart}
-        className={`px-6 py-1.5 ${buttonColor} rounded-xl cursor-pointer font-black text-white text-xl whitespace-nowrap`}
+        className={`px-6 py-1.5 ${buttonColor} rounded-xl cursor-pointer font-bold text-white text-xl whitespace-nowrap`}
       >
         {buttonLabel}
       </button>

@@ -6,8 +6,7 @@ import { useAppSelector } from "@/redux/hooks";
 import TransitionData from "@/components/TransitionData/TransitionData";
 
 export default function FramerSequencePage() {
-  // Redux
-  const { animationCount, transitionTime } = useAppSelector(
+  const { animationCount, transitionTime, animationType } = useAppSelector(
     (state) => state.transition
   );
 
@@ -78,6 +77,7 @@ export default function FramerSequencePage() {
                 key={i}
                 index={i}
                 transitionTime={transitionTime}
+                animationType={animationType}
                 onFinish={handleFinish}
               />
             );

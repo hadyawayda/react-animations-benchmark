@@ -33,11 +33,11 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "Resolve Sans Regular", helvetica, arial, sans-serif;
+  font-family: "Resolve Sans Regular", arial, sans-serif;
 }
 
 main {
-  font-family: "Resolve Sans Light", helvetica, arial, sans-serif;
+  font-family: "Resolve Sans Light", arial, sans-serif;
 }
 
 a:hover {
